@@ -3,6 +3,7 @@ import { Product } from '../model/product.model';
 import { ProductRepository } from '../model/product.repository';
 import { Cart } from '../model/cart.model';
 import { Router } from '@angular/router';
+import { PlatformService } from '../platform.service';
 @Component({
   selector: 'store',
   templateUrl: 'store.component.html',
@@ -14,12 +15,12 @@ export class StoreComponent {
   productsPerPage = signal(4);
   selectedPage = signal(1);
   pagedProducts: Signal<Product[]>;
-  //pageNumbers: Signal<number[]>;
   pageCount: Signal<number>;
   constructor(
     private repository: ProductRepository,
     private cart: Cart,
-    private router: Router
+    private router: Router,
+    private ps: PlatformService
   ) {
     this.products = computed(() => {
       if (this.selectedCategory() == undefined) {
@@ -58,5 +59,8 @@ export class StoreComponent {
   addProductToCart(product: Product) {
     this.cart.addLine(product);
     this.router.navigateByUrl('/cart');
+  }
+  get isServer() {
+    return this.ps.isServer;
   }
 }

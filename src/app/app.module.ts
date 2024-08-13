@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  provideClientHydration,
+} from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { StoreModule } from './store/store.module';
 import { RouterModule } from '@angular/router';
@@ -8,38 +11,44 @@ import { CheckoutComponent } from './store/checkout.component';
 import { StoreComponent } from './store/store.component';
 import { StoreFirstGuard } from './storeFirst.guard';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PlatformService } from './platform.service';
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
     StoreModule,
-    RouterModule.forRoot([
+    RouterModule.forRoot(
+      [
+        {
+          path: 'store',
+          component: StoreComponent,
+          canActivate: [StoreFirstGuard],
+        },
+        {
+          path: 'cart',
+          component: CartDetailComponent,
+          canActivate: [StoreFirstGuard],
+        },
+        {
+          path: 'admin',
+          loadChildren: () =>
+            import('./admin/admin.module').then((m) => m.AdminModule),
+          canActivate: [StoreFirstGuard],
+        },
+        {
+          path: 'checkout',
+          component: CheckoutComponent,
+          canActivate: [StoreFirstGuard],
+        },
+        { path: '**', redirectTo: '/store' },
+      ],
       {
-        path: 'store',
-        component: StoreComponent,
-        canActivate: [StoreFirstGuard],
-      },
-      {
-        path: 'cart',
-        component: CartDetailComponent,
-        canActivate: [StoreFirstGuard],
-      },
-      {
-        path: 'admin',
-        loadChildren: () =>
-          import('./admin/admin.module').then((m) => m.AdminModule),
-        canActivate: [StoreFirstGuard],
-      },
-      {
-        path: 'checkout',
-        component: CheckoutComponent,
-        canActivate: [StoreFirstGuard],
-      },
-      { path: '**', redirectTo: '/store' },
-    ]),
+        initialNavigation: 'enabledBlocking',
+      }
+    ),
     BrowserAnimationsModule,
   ],
-  providers: [StoreFirstGuard],
+  providers: [StoreFirstGuard, provideClientHydration(), PlatformService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
