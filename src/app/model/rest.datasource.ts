@@ -12,9 +12,7 @@ export class RestDataSource {
   baseUrl: string;
   authToken?: string;
   constructor(private http: HttpClient, ps: PlatformService) {
-    this.baseUrl = ps.isServer
-      ? `http://localhost:${PORT}/`
-      : `${PROTOCOL}://${location.hostname}:${PORT}/`;
+    this.baseUrl = ps.isServer ? `http://localhost:${PORT}/` : '/api/';
   }
 
   get products(): Observable<Product[]> {
